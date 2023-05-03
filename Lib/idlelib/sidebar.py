@@ -407,6 +407,7 @@ class ShellSidebar(BaseSideBar):
     def __init__(self, editwin):
         self.canvas = None
         self.line_prompts = {}
+        self.prompt = "python >"
 
         super().__init__(editwin)
 
@@ -475,7 +476,7 @@ class ShellSidebar(BaseSideBar):
             y = lineinfo[1]
             prev_newline_tagnames = text_tagnames(f"{index} linestart -1c")
             prompt = (
-                '>>>' if "console" in prev_newline_tagnames else
+                self.prompt if "console" in prev_newline_tagnames else
                 '...' if "stdin" in prev_newline_tagnames else
                 None
             )
@@ -498,8 +499,8 @@ class ShellSidebar(BaseSideBar):
         """Update the sidebar text font, usually after config changes."""
         font = idleConf.GetFont(self.text, 'main', 'EditorWindow')
         tk_font = Font(self.text, font=font)
-        char_width = max(tk_font.measure(char) for char in ['>', '.'])
-        self.canvas.configure(width=char_width * 3 + 4)
+        char_width = max(tk_font.measure(char) for char in self.prompt)
+        self.canvas.configure(width=char_width * len(self.prompt) + 4)
         self.font = font
         self.change_callback()
 
